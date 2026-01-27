@@ -174,11 +174,20 @@ function renderBagItems(items) {
     container.innerHTML = "<span class=\"muted\">Sem itens associados</span>";
     return;
   }
+  const header = document.createElement("div");
+  header.className = "item-pill header item-row";
+  header.innerHTML = "<span>Item</span><span>Env.</span><span>Ret.</span><span>Preço</span>";
+  container.appendChild(header);
   items.forEach((item) => {
     const product = products.find((entry) => entry.id === item.product_id);
     const line = document.createElement("div");
-    line.className = "item-pill";
-    line.textContent = `${product?.name ?? "Produto"} • ${item.quantity_sent} enviados • ${item.quantity_returned} retornados`;
+    line.className = "item-pill item-row";
+    line.innerHTML = `
+      <span>${product?.name ?? "Produto"}</span>
+      <span>${item.quantity_sent}</span>
+      <span>${item.quantity_returned}</span>
+      <span>${currencyFormatter.format(product?.price ?? 0)}</span>
+    `;
     container.appendChild(line);
   });
 }
