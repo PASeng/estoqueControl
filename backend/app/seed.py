@@ -112,63 +112,85 @@ def seed_data(db: Session) -> None:
     db.add_all(products)
     db.flush()
 
-    bag_1 = Bag(
-        code="MA-001",
-        status="Em campo",
-        due_date=datetime.utcnow() + timedelta(days=3),
-        seller=sellers[0],
-    )
-    bag_2 = Bag(
-        code="MA-014",
-        status="Aguardando",
-        due_date=datetime.utcnow() + timedelta(days=5),
-        seller=sellers[1],
-    )
-    bag_3 = Bag(
-        code="MA-020",
-        status="Em campo",
-        due_date=datetime.utcnow() + timedelta(days=7),
-        seller=sellers[4],
-    )
-    bag_4 = Bag(code="MA-031", status="Disponível")
-    bag_5 = Bag(code="MA-032", status="Disponível")
-
-    bag_1.items = [
-        BagItem(product_id=products[0].id, quantity_sent=4, quantity_returned=1),
-        BagItem(product_id=products[6].id, quantity_sent=6, quantity_returned=2),
-    ]
-    bag_2.items = [
-        BagItem(product_id=products[12].id, quantity_sent=5, quantity_returned=0),
-        BagItem(product_id=products[18].id, quantity_sent=7, quantity_returned=3),
-    ]
-    bag_3.items = [
-        BagItem(product_id=products[24].id, quantity_sent=8, quantity_returned=4),
-        BagItem(product_id=products[30].id, quantity_sent=4, quantity_returned=1),
+    statuses = [
+        "Em campo",
+        "Em campo",
+        "Aguardando",
+        "Em campo",
+        "Aguardando",
+        "Disponível",
+        "Disponível",
+        "Aguardando",
+        "Disponível",
+        "Em campo",
+        "Disponível",
+        "Aguardando",
+        "Disponível",
+        "Disponível",
+        "Em campo",
     ]
 
-    db.add_all([bag_1, bag_2, bag_3, bag_4, bag_5])
+    bags = []
+    for index in range(15):
+        status = statuses[index]
+        seller = sellers[index % len(sellers)] if status == "Em campo" else None
+        due_date = (
+            datetime.utcnow() + timedelta(days=3 + index)
+            if status in {"Em campo", "Aguardando"}
+            else None
+        )
+        bag = Bag(
+            code=f"MA-{index + 1:03d}",
+            status=status,
+            due_date=due_date,
+            seller=seller,
+        )
+        bags.append(bag)
+
+    for idx, bag in enumerate(bags[:6]):
+        bag.items = [
+            BagItem(
+                product_id=products[idx * 2].id,
+                quantity_sent=4 + idx,
+                quantity_returned=1,
+            ),
+            BagItem(
+                product_id=products[idx * 2 + 1].id,
+                quantity_sent=6 + idx,
+                quantity_returned=2,
+            ),
+        ]
+
+    db.add_all(bags)
     db.flush()
 
     reports = [
         ClosingReport(
-            bag_id=bag_1.id,
+            bag_id=bags[0].id,
             sold_count=6,
             summary=(
                 "Vendas concentradas em anéis banhados. Sugestão: reduzir prata na próxima maleta."
             ),
         ),
         ClosingReport(
-            bag_id=bag_2.id,
+            bag_id=bags[1].id,
             sold_count=8,
             summary=(
                 "Boa saída de colares de ouro. Recomenda-se incluir mais conjuntos completos."
             ),
         ),
         ClosingReport(
-            bag_id=bag_3.id,
+            bag_id=bags[3].id,
             sold_count=4,
             summary=(
                 "Baixa conversão em pulseiras. Ajustar mix para peças de maior giro."
+            ),
+        ),
+        ClosingReport(
+            bag_id=bags[9].id,
+            sold_count=5,
+            summary=(
+                "Acessórios de prata com giro baixo. Priorizar peças banhadas na próxima remessa."
             ),
         ),
     ]
