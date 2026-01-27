@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict
 class SellerBase(BaseModel):
     name: str
     cpf: str
+    phone: str | None = None
+    region: str | None = None
     address: str | None = None
     gps_point: str | None = None
 
@@ -24,6 +26,7 @@ class SellerResponse(SellerBase):
 class ProductBase(BaseModel):
     name: str
     category: str
+    material: str | None = None
     barcode: str | None = None
     price: float
     stock_qty: int = 0
@@ -51,6 +54,22 @@ class BagItemResponse(BaseModel):
     product_id: int
     quantity_sent: int
     quantity_returned: int
+
+
+class ClosingReportResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    bag_id: int
+    sold_count: int
+    summary: str
+    created_at: datetime
+
+
+class ClosingReportUpdate(BaseModel):
+    bag_id: int
+    sold_count: int
+    summary: str
 
 
 class BagBase(BaseModel):

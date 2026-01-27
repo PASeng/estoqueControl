@@ -12,6 +12,8 @@ class Seller(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     cpf: Mapped[str] = mapped_column(String(14), unique=True, nullable=False)
+    phone: Mapped[str | None] = mapped_column(String(20))
+    region: Mapped[str | None] = mapped_column(String(80))
     address: Mapped[str | None] = mapped_column(String(255))
     gps_point: Mapped[str | None] = mapped_column(String(120))
     created_at: Mapped[datetime] = mapped_column(
@@ -27,6 +29,7 @@ class Product(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     category: Mapped[str] = mapped_column(String(80), nullable=False)
+    material: Mapped[str | None] = mapped_column(String(80))
     barcode: Mapped[str | None] = mapped_column(String(80), unique=True)
     price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     stock_qty: Mapped[int] = mapped_column(Integer, default=0)
@@ -68,6 +71,7 @@ class ClosingReport(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     bag_id: Mapped[int] = mapped_column(ForeignKey("bags.id"))
+    sold_count: Mapped[int] = mapped_column(Integer, default=0)
     summary: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow

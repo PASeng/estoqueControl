@@ -28,3 +28,17 @@ def create_product(payload: ProductCreate, db: Session = Depends(get_db)) -> Pro
     db.commit()
     db.refresh(product)
     return product
+
+
+@router.put("/{product_id}", response_model=ProductResponse)
+def update_product(
+    product_id: int, payload: ProductCreate, db: Session = Depends(get_db)
+) -> ProductResponse:
+    product = db.execute(select(Product).where(Product.id == product_id)).scalar_one_or_none()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    for key, value in payload.model_dump().items():
+        setattr(product, key, value)
+    db.commit()
+    db.refresh(product)
+    return product

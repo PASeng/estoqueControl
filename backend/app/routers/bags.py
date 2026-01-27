@@ -38,3 +38,27 @@ def create_bag(payload: BagCreate, db: Session = Depends(get_db)) -> BagResponse
     db.commit()
     db.refresh(bag)
     return bag
+
+
+@router.put("/{bag_id}", response_model=BagResponse)
+def update_bag(bag_id: int, payload: BagCreate, db: Session = Depends(get_db)) -> BagResponse:
+    bag = db.execute(select(Bag).where(Bag.id == bag_id)).scalar_one_or_none()
+    if not bag:
+        raise HTTPException(status_code=404, detail="Maleta não encontrada")
+    bag.code = payload.code
+    bag.status = payload.status
+    bag.due_date = payload.due_date
+    bag.seller_id = payload.seller_id
+    if payload.items:
+        bag.items.clear()
+        for item in payload.items:
+            bag.items.append(
+                BagItem(
+                    product_id=item.product_id,
+                    quantity_sent=item.quantity_sent,
+                    quantity_returned=0,
+                )
+            )
+    db.commit()
+    db.refresh(bag)
+    return bag

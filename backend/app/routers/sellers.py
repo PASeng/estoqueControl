@@ -25,3 +25,17 @@ def create_seller(payload: SellerCreate, db: Session = Depends(get_db)) -> Selle
     db.commit()
     db.refresh(seller)
     return seller
+
+
+@router.put("/{seller_id}", response_model=SellerResponse)
+def update_seller(
+    seller_id: int, payload: SellerCreate, db: Session = Depends(get_db)
+) -> SellerResponse:
+    seller = db.execute(select(Seller).where(Seller.id == seller_id)).scalar_one_or_none()
+    if not seller:
+        raise HTTPException(status_code=404, detail="Vendedora não encontrada")
+    for key, value in payload.model_dump().items():
+        setattr(seller, key, value)
+    db.commit()
+    db.refresh(seller)
+    return seller

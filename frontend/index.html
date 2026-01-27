@@ -106,14 +106,67 @@
             <h3>Maletas</h3>
             <span class="muted">Rodízio de consignação</span>
           </div>
+          <button class="secondary add-button" data-open-modal="bag">
+            + Nova maleta
+          </button>
           <div class="bag-grid" id="bag-list"></div>
         </section>
-        <section class="card panel-card detail-card">
+      </section>
+
+      <section class="tab-panel" data-tab="equipe">
+        <section class="card panel-card">
           <div class="card-header">
-            <h3>Detalhes da maleta</h3>
-            <span class="muted">Editar informações</span>
+            <h3>Equipe</h3>
+            <span class="muted">Vendedoras consignadas</span>
           </div>
-          <form class="detail-form" id="bag-form">
+          <button class="secondary add-button" data-open-modal="seller">
+            + Nova vendedora
+          </button>
+          <div class="seller-grid" id="seller-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="acervo">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Acervo</h3>
+            <span class="muted">Produtos cadastrados</span>
+          </div>
+          <div class="search-bar">
+            <input
+              id="product-search"
+              type="text"
+              placeholder="Bipe o código de barras, nome ou categoria"
+            />
+            <button class="search-button" id="product-search-btn">Buscar</button>
+          </div>
+          <button class="secondary add-button" data-open-modal="product">
+            + Novo produto
+          </button>
+          <div class="product-grid" id="product-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="relatorios">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Relatórios de vendas</h3>
+            <span class="muted">Fechamentos recentes</span>
+          </div>
+          <div class="report-grid" id="report-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modal-title">Detalhes</h3>
+          <button class="modal-close" id="modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <form class="detail-form modal-form" id="bag-form" data-modal="bag">
+            <input type="hidden" name="id" />
             <div class="form-row">
               <label for="bag-code">Código</label>
               <input id="bag-code" name="code" type="text" />
@@ -138,6 +191,10 @@
               <label for="bag-items">Itens enviados</label>
               <input id="bag-items" name="items" type="number" min="0" />
             </div>
+            <div class="form-row">
+              <label>Itens da maleta</label>
+              <div class="items-list" id="bag-items-list"></div>
+            </div>
             <div class="form-actions">
               <button class="secondary" type="button" id="bag-reset">
                 Limpar
@@ -145,26 +202,16 @@
               <button class="primary" type="submit">Salvar</button>
             </div>
           </form>
-        </section>
-      </section>
 
-      <section class="tab-panel" data-tab="equipe">
-        <section class="card panel-card">
-          <div class="card-header">
-            <h3>Equipe</h3>
-            <span class="muted">Vendedoras consignadas</span>
-          </div>
-          <div class="seller-grid" id="seller-list"></div>
-        </section>
-        <section class="card panel-card detail-card">
-          <div class="card-header">
-            <h3>Dados da vendedora</h3>
-            <span class="muted">Contato e localização</span>
-          </div>
-          <form class="detail-form" id="seller-form">
+          <form class="detail-form modal-form" id="seller-form" data-modal="seller">
+            <input type="hidden" name="id" />
             <div class="form-row">
               <label for="seller-name">Nome</label>
               <input id="seller-name" name="name" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-cpf">CPF</label>
+              <input id="seller-cpf" name="cpf" type="text" />
             </div>
             <div class="form-row">
               <label for="seller-region">Região</label>
@@ -172,7 +219,7 @@
             </div>
             <div class="form-row">
               <label for="seller-contact">Contato</label>
-              <input id="seller-contact" name="contact" type="text" />
+              <input id="seller-contact" name="phone" type="text" />
             </div>
             <div class="form-row">
               <label for="seller-address">Endereço</label>
@@ -180,11 +227,7 @@
             </div>
             <div class="form-row">
               <label for="seller-gps">Ponto GPS</label>
-              <input id="seller-gps" name="gps" type="text" />
-            </div>
-            <div class="form-row">
-              <label for="seller-bags">Maletas ativas</label>
-              <input id="seller-bags" name="bags" type="number" min="0" />
+              <input id="seller-gps" name="gps_point" type="text" />
             </div>
             <div class="form-actions">
               <button class="secondary" type="button" id="seller-reset">
@@ -193,23 +236,17 @@
               <button class="primary" type="submit">Salvar</button>
             </div>
           </form>
-        </section>
-      </section>
 
-      <section class="tab-panel" data-tab="acervo">
-        <section class="card panel-card">
-          <div class="card-header">
-            <h3>Acervo</h3>
-            <span class="muted">Produtos cadastrados</span>
-          </div>
-          <div class="product-grid" id="product-list"></div>
-        </section>
-        <section class="card panel-card detail-card">
-          <div class="card-header">
-            <h3>Produto selecionado</h3>
-            <span class="muted">Editar cadastro</span>
-          </div>
-          <form class="detail-form" id="product-form">
+          <form
+            class="detail-form modal-form"
+            id="product-form"
+            data-modal="product"
+          >
+            <input type="hidden" name="id" />
+            <div class="form-row">
+              <label for="product-barcode">Código de barras</label>
+              <input id="product-barcode" name="barcode" type="text" />
+            </div>
             <div class="form-row">
               <label for="product-name">Nome</label>
               <input id="product-name" name="name" type="text" />
@@ -223,12 +260,12 @@
               <input id="product-material" name="material" type="text" />
             </div>
             <div class="form-row">
-              <label for="product-sku">SKU</label>
-              <input id="product-sku" name="sku" type="text" />
-            </div>
-            <div class="form-row">
               <label for="product-price">Preço</label>
               <input id="product-price" name="price" type="number" step="0.01" />
+            </div>
+            <div class="form-row">
+              <label for="product-stock">Estoque</label>
+              <input id="product-stock" name="stock_qty" type="number" />
             </div>
             <div class="form-actions">
               <button class="secondary" type="button" id="product-reset">
@@ -237,34 +274,20 @@
               <button class="primary" type="submit">Salvar</button>
             </div>
           </form>
-        </section>
-      </section>
 
-      <section class="tab-panel" data-tab="relatorios">
-        <section class="card panel-card">
-          <div class="card-header">
-            <h3>Relatórios de vendas</h3>
-            <span class="muted">Fechamentos recentes</span>
-          </div>
-          <div class="report-grid" id="report-list"></div>
-        </section>
-        <section class="card panel-card detail-card">
-          <div class="card-header">
-            <h3>Relatório selecionado</h3>
-            <span class="muted">Resumo da IA</span>
-          </div>
-          <form class="detail-form" id="report-form">
+          <form class="detail-form modal-form" id="report-form" data-modal="report">
+            <input type="hidden" name="id" />
             <div class="form-row">
               <label for="report-bag">Maleta</label>
-              <input id="report-bag" name="bag" type="text" />
+              <input id="report-bag" name="bag_id" type="text" />
             </div>
             <div class="form-row">
               <label for="report-date">Data</label>
-              <input id="report-date" name="date" type="text" />
+              <input id="report-date" name="created_at" type="text" />
             </div>
             <div class="form-row">
               <label for="report-sold">Itens vendidos</label>
-              <input id="report-sold" name="sold" type="number" />
+              <input id="report-sold" name="sold_count" type="number" />
             </div>
             <div class="form-row">
               <label for="report-summary">Resumo</label>
@@ -277,9 +300,9 @@
               <button class="primary" type="submit">Salvar</button>
             </div>
           </form>
-        </section>
-      </section>
-    </main>
+        </div>
+      </div>
+    </div>
 
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="inicio">Início</button>

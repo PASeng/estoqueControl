@@ -3,170 +3,13 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const sellers = [
-  {
-    name: "Camila Duarte",
-    region: "Zona Norte",
-    bags: 2,
-    status: "Ativa",
-    contact: "(11) 98765-1201",
-    address: "Rua das Oliveiras, 120",
-    gps: "-23.482, -46.621",
-  },
-  {
-    name: "Bianca Lopes",
-    region: "Zona Sul",
-    bags: 1,
-    status: "Ativa",
-    contact: "(11) 98814-3344",
-    address: "Av. República, 450",
-    gps: "-23.563, -46.654",
-  },
-  {
-    name: "Juliana Reis",
-    region: "Centro",
-    bags: 1,
-    status: "Em rota",
-    contact: "(11) 97987-5520",
-    address: "Rua do Comércio, 88",
-    gps: "-23.548, -46.636",
-  },
-  {
-    name: "Renata Alves",
-    region: "Zona Oeste",
-    bags: 0,
-    status: "Disponível",
-    contact: "(11) 98541-0092",
-    address: "Rua Guaicurus, 901",
-    gps: "-23.526, -46.697",
-  },
-  {
-    name: "Fernanda Dias",
-    region: "Zona Leste",
-    bags: 2,
-    status: "Ativa",
-    contact: "(11) 99411-7782",
-    address: "Av. Radial Leste, 3020",
-    gps: "-23.544, -46.564",
-  },
-  {
-    name: "Larissa Monteiro",
-    region: "Zona Norte",
-    bags: 1,
-    status: "Ativa",
-    contact: "(11) 99612-7701",
-    address: "Rua Campo Belo, 14",
-    gps: "-23.475, -46.633",
-  },
-  {
-    name: "Patricia Souza",
-    region: "Centro",
-    bags: 0,
-    status: "Disponível",
-    contact: "(11) 99098-1100",
-    address: "Rua 7 de Abril, 19",
-    gps: "-23.545, -46.638",
-  },
-  {
-    name: "Marta Santos",
-    region: "Zona Sul",
-    bags: 1,
-    status: "Em rota",
-    contact: "(11) 98572-4420",
-    address: "Rua Bandeira, 712",
-    gps: "-23.589, -46.669",
-  },
-  {
-    name: "Natalia Cruz",
-    region: "Zona Oeste",
-    bags: 1,
-    status: "Ativa",
-    contact: "(11) 97771-0920",
-    address: "Rua Lapa, 331",
-    gps: "-23.514, -46.693",
-  },
-  {
-    name: "Ana Paula Lima",
-    region: "Zona Leste",
-    bags: 0,
-    status: "Disponível",
-    contact: "(11) 98220-9901",
-    address: "Rua Aricanduva, 1700",
-    gps: "-23.566, -46.521",
-  },
-];
+const API_BASE = "/api";
 
-const bags = [
-  {
-    code: "MA-001",
-    status: "Em campo",
-    seller: "Camila Duarte",
-    due: "03/11",
-    items: 18,
-  },
-  {
-    code: "MA-014",
-    status: "Aguardando",
-    seller: "Bianca Lopes",
-    due: "05/11",
-    items: 22,
-  },
-  {
-    code: "MA-020",
-    status: "Em campo",
-    seller: "Fernanda Dias",
-    due: "07/11",
-    items: 16,
-  },
-  { code: "MA-031", status: "Disponível", seller: "-", due: "-", items: 0 },
-  { code: "MA-032", status: "Disponível", seller: "-", due: "-", items: 0 },
-];
-
-const categories = [
-  "Anéis",
-  "Colares",
-  "Pulseiras",
-  "Brincos",
-  "Pingentes",
-];
-
-const materials = ["Ouro", "Prata", "Banhado"];
-
-const products = Array.from({ length: 50 }, (_, index) => {
-  const category = categories[index % categories.length];
-  const material = materials[index % materials.length];
-  return {
-    name: `${category} ${index + 1}`,
-    category,
-    material,
-    price: (120 + index * 7.5).toFixed(2),
-    sku: `PRD-${String(index + 1).padStart(3, "0")}`,
-  };
-});
-
-const reports = [
-  {
-    bag: "MA-001",
-    date: "02/11/2025",
-    sold: 6,
-    summary:
-      "Vendas concentradas em anéis banhados. Sugestão: reduzir prata na próxima maleta.",
-  },
-  {
-    bag: "MA-014",
-    date: "01/11/2025",
-    sold: 8,
-    summary:
-      "Boa saída de colares de ouro. Recomenda-se incluir mais conjuntos completos.",
-  },
-  {
-    bag: "MA-020",
-    date: "30/10/2025",
-    sold: 4,
-    summary:
-      "Baixa conversão em pulseiras. Ajustar mix para peças de maior giro.",
-  },
-];
+let sellers = [];
+let bags = [];
+let products = [];
+let reports = [];
+let filteredProducts = [];
 
 function setFormValues(form, values) {
   if (!form) return;
@@ -193,20 +36,22 @@ function renderSellers() {
     card.innerHTML = `
       <h4>${seller.name}</h4>
       <div class="mini-meta">
-        <span>${seller.region}</span>
-        <span>${seller.bags} maleta(s)</span>
+        <span>${seller.region ?? "—"}</span>
+        <span>${seller.phone ?? "Sem contato"}</span>
       </div>
-      <span class="tag neutral">${seller.status}</span>
+      <span class="tag neutral">Ativa</span>
     `;
     card.addEventListener("click", () => {
       setFormValues(document.getElementById("seller-form"), {
+        id: seller.id,
         name: seller.name,
-        region: seller.region,
-        contact: seller.contact,
+        cpf: seller.cpf,
+        region: seller.region ?? "",
+        phone: seller.phone,
         address: seller.address,
-        gps: seller.gps,
-        bags: seller.bags,
+        gps_point: seller.gps_point,
       });
+      openModal("seller", "Dados da vendedora");
     });
     container.appendChild(card);
   });
@@ -217,6 +62,11 @@ function renderBags() {
   if (!container) return;
   container.innerHTML = "";
   bags.forEach((bag) => {
+    const seller = sellers.find((entry) => entry.id === bag.seller_id);
+    const totalItems = bag.items?.reduce(
+      (sum, item) => sum + (item.quantity_sent || 0),
+      0,
+    );
     const tagClass =
       bag.status === "Em campo"
         ? "success"
@@ -228,22 +78,25 @@ function renderBags() {
     card.innerHTML = `
       <h4>${bag.code}</h4>
       <div class="mini-meta">
-        <span>${bag.items} itens</span>
-        <span>Venc: ${bag.due}</span>
+        <span>${totalItems ?? 0} itens</span>
+        <span>Venc: ${formatDate(bag.due_date)}</span>
       </div>
       <div class="mini-meta">
-        <span>Vendedora: ${bag.seller}</span>
+        <span>Vendedora: ${seller?.name ?? "-"}</span>
       </div>
       <span class="tag ${tagClass}">${bag.status}</span>
     `;
     card.addEventListener("click", () => {
       setFormValues(document.getElementById("bag-form"), {
+        id: bag.id,
         code: bag.code,
         status: bag.status,
-        seller: bag.seller,
-        due: bag.due,
-        items: bag.items,
+        seller: seller?.name ?? "",
+        due: formatDate(bag.due_date),
+        items: totalItems ?? 0,
       });
+      renderBagItems(bag.items ?? []);
+      openModal("bag", "Detalhes da maleta");
     });
     container.appendChild(card);
   });
@@ -253,22 +106,31 @@ function renderProducts() {
   const container = document.getElementById("product-list");
   if (!container) return;
   container.innerHTML = "";
-  products.forEach((product) => {
+  filteredProducts.forEach((product) => {
     const card = document.createElement("div");
     card.className = "mini-tile";
     card.innerHTML = `
       <h4>${product.name}</h4>
       <div class="mini-meta">
         <span>${product.category}</span>
-        <span>${product.material}</span>
+        <span>${product.barcode ?? "Sem código"}</span>
       </div>
       <div class="mini-meta">
-        <span>${product.sku}</span>
+        <span>Estoque: ${product.stock_qty}</span>
         <span>${currencyFormatter.format(product.price)}</span>
       </div>
     `;
     card.addEventListener("click", () => {
-      setFormValues(document.getElementById("product-form"), product);
+      setFormValues(document.getElementById("product-form"), {
+        id: product.id,
+        barcode: product.barcode,
+        name: product.name,
+        category: product.category,
+        material: product.material ?? "",
+        price: product.price,
+        stock_qty: product.stock_qty,
+      });
+      openModal("product", "Produto selecionado");
     });
     container.appendChild(card);
   });
@@ -282,21 +144,129 @@ function renderReports() {
     const card = document.createElement("div");
     card.className = "mini-tile";
     card.innerHTML = `
-      <h4>Maleta ${report.bag}</h4>
+      <h4>Maleta ${report.bag_id}</h4>
       <div class="mini-meta">
-        <span>${report.date}</span>
-        <span>${report.sold} vendidos</span>
+        <span>${formatDate(report.created_at)}</span>
+        <span>${report.sold_count} vendidos</span>
       </div>
       <p class="muted">${report.summary}</p>
     `;
     card.addEventListener("click", () => {
-      setFormValues(document.getElementById("report-form"), report);
+      setFormValues(document.getElementById("report-form"), {
+        id: report.id,
+        bag_id: report.bag_id,
+        created_at: formatDate(report.created_at),
+        sold_count: report.sold_count,
+        summary: report.summary,
+      });
+      openModal("report", "Relatório selecionado");
     });
     container.appendChild(card);
   });
 }
 
+function renderBagItems(items) {
+  const container = document.getElementById("bag-items-list");
+  if (!container) return;
+  container.innerHTML = "";
+  if (items.length === 0) {
+    container.innerHTML = "<span class=\"muted\">Sem itens associados</span>";
+    return;
+  }
+  items.forEach((item) => {
+    const product = products.find((entry) => entry.id === item.product_id);
+    const line = document.createElement("div");
+    line.className = "item-pill";
+    line.textContent = `${product?.name ?? "Produto"} • ${item.quantity_sent} enviados`;
+    container.appendChild(line);
+  });
+}
+
+function openModal(type, title) {
+  const overlay = document.getElementById("modal-overlay");
+  const titleEl = document.getElementById("modal-title");
+  const forms = document.querySelectorAll(".modal-form");
+  forms.forEach((form) => {
+    form.classList.toggle("active", form.dataset.modal === type);
+  });
+  titleEl.textContent = title;
+  overlay.classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("active");
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("pt-BR");
+}
+
+function filterProducts() {
+  const query = document.getElementById("product-search")?.value?.toLowerCase() || "";
+  filteredProducts = products.filter((product) => {
+    return (
+      product.name.toLowerCase().includes(query) ||
+      product.category.toLowerCase().includes(query) ||
+      (product.barcode ?? "").toLowerCase().includes(query)
+    );
+  });
+  renderProducts();
+}
+
+async function fetchJson(path) {
+  const response = await fetch(`${API_BASE}${path}`);
+  if (!response.ok) {
+    throw new Error(`Erro ao carregar ${path}`);
+  }
+  return response.json();
+}
+
+async function loadData() {
+  try {
+    const [sellersData, productsData, bagsData, reportsData] = await Promise.all([
+      fetchJson("/sellers"),
+      fetchJson("/products"),
+      fetchJson("/bags"),
+      fetchJson("/closing/reports"),
+    ]);
+    sellers = sellersData;
+    products = productsData;
+    filteredProducts = [...products];
+    bags = bagsData;
+    reports = reportsData;
+    renderSellers();
+    renderProducts();
+    renderBags();
+    renderReports();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function wireFormActions() {
+  document.getElementById("modal-close")?.addEventListener("click", closeModal);
+  document.getElementById("modal-overlay")?.addEventListener("click", (event) => {
+    if (event.target.id === "modal-overlay") {
+      closeModal();
+    }
+  });
+
+  document.querySelectorAll("[data-open-modal]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const modalType = button.dataset.openModal;
+      const title = button.textContent?.trim() ?? "Detalhes";
+      const form = document.querySelector(`.modal-form[data-modal="${modalType}"]`);
+      resetForm(form);
+      if (modalType === "bag") {
+        renderBagItems([]);
+      }
+      openModal(modalType, title);
+    });
+  });
+
   document.getElementById("bag-reset")?.addEventListener("click", () => {
     resetForm(document.getElementById("bag-form"));
   });
@@ -310,11 +280,110 @@ function wireFormActions() {
     resetForm(document.getElementById("report-form"));
   });
 
-  ["bag-form", "seller-form", "product-form", "report-form"].forEach((id) => {
-    const form = document.getElementById(id);
-    form?.addEventListener("submit", (event) => {
-      event.preventDefault();
+  document.getElementById("product-search")?.addEventListener("input", filterProducts);
+  document.getElementById("product-search-btn")?.addEventListener("click", filterProducts);
+}
+
+async function submitForm(formId, endpoint) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+  const id = payload.id;
+  delete payload.id;
+  delete payload.created_at;
+
+  if (payload.price) {
+    payload.price = Number(payload.price);
+  }
+  if (payload.stock_qty !== undefined) {
+    payload.stock_qty = Number(payload.stock_qty || 0);
+  }
+  if (payload.sold_count !== undefined) {
+    payload.sold_count = Number(payload.sold_count || 0);
+  }
+  if (payload.bag_id !== undefined) {
+    payload.bag_id = Number(payload.bag_id || 0);
+  }
+
+  const method = id ? "PUT" : "POST";
+  const url = id ? `${API_BASE}${endpoint}/${id}` : `${API_BASE}${endpoint}`;
+  const response = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao salvar");
+  }
+  return response.json();
+}
+
+function parseDueDate(value) {
+  if (!value) return null;
+  const [day, month] = value.split("/");
+  if (!day || !month) return null;
+  const year = new Date().getFullYear();
+  return new Date(year, Number(month) - 1, Number(day)).toISOString();
+}
+
+function findSellerIdByName(name) {
+  if (!name) return null;
+  const seller = sellers.find(
+    (entry) => entry.name.toLowerCase() === name.toLowerCase(),
+  );
+  return seller?.id ?? null;
+}
+
+function attachFormSubmits() {
+  document.getElementById("seller-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await submitForm("seller-form", "/sellers");
+    await loadData();
+    closeModal();
+  });
+
+  document.getElementById("product-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await submitForm("product-form", "/products");
+    await loadData();
+    closeModal();
+  });
+
+  document.getElementById("report-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = document.getElementById("report-form");
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    if (!payload.id) {
+      return;
+    }
+    await submitForm("report-form", "/closing/reports");
+    await loadData();
+    closeModal();
+  });
+
+  document.getElementById("bag-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = document.getElementById("bag-form");
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    const id = payload.id;
+    const request = {
+      code: payload.code,
+      status: payload.status,
+      due_date: parseDueDate(payload.due),
+      seller_id: findSellerIdByName(payload.seller),
+      items: [],
+    };
+    await fetch(`${API_BASE}/bags${id ? `/${id}` : ""}`, {
+      method: id ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
     });
+    await loadData();
+    closeModal();
   });
 }
 
@@ -382,10 +451,8 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-renderSellers();
-renderBags();
-renderProducts();
-renderReports();
 setupNavigation();
 wireFormActions();
+attachFormSubmits();
+loadData();
 loadSummary();

@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .db import Base, engine
+from .db import Base, SessionLocal, engine
 from .routers import bags, closing, dashboard, products, sellers
+from .seed import seed_data
 
 app = FastAPI(title="Kamilla Intelligence API")
 
@@ -18,6 +19,11 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_data(db)
+    finally:
+        db.close()
 
 
 @app.get("/health")
