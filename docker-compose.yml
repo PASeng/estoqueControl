@@ -15,6 +15,7 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql+psycopg2://kamilla:kamilla@db:5432/kamilla
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     depends_on:
       - db
     ports:

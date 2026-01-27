@@ -2,10 +2,11 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from ..db import get_db
-from ..models import Bag, ClosingReport
+from ..models import Bag, BagItem, ClosingReport
+from ..services.gemini import generate_closing_summary
 from ..schemas import ClosingReportResponse, ClosingReportUpdate
 
 router = APIRouter(prefix="/closing", tags=["Fechamento"])
@@ -19,15 +20,23 @@ def list_reports(db: Session = Depends(get_db)) -> list[ClosingReportResponse]:
 
 @router.post("/{bag_id}/report", status_code=status.HTTP_201_CREATED)
 def create_closing_report(bag_id: int, db: Session = Depends(get_db)) -> dict:
-    bag = db.execute(select(Bag).where(Bag.id == bag_id)).scalar_one_or_none()
+    bag = db.execute(
+        select(Bag)
+        .options(joinedload(Bag.items).joinedload(BagItem.product))
+        .where(Bag.id == bag_id)
+    ).scalar_one_or_none()
     if not bag:
         raise HTTPException(status_code=404, detail="Maleta não encontrada")
 
-    summary = (
-        f"Fechamento da maleta {bag.code} em {datetime.utcnow().date()}: "
-        "IA sugere revisar a composição de metais para a próxima maleta."
+    sold_count = sum(
+        max(item.quantity_sent - item.quantity_returned, 0) for item in bag.items
     )
-    report = ClosingReport(bag_id=bag.id, sold_count=0, summary=summary)
+    fallback_summary = (
+        f"Fechamento da maleta {bag.code} em {datetime.utcnow().date()}: "
+        "IA pendente para gerar insights."
+    )
+    summary = generate_closing_summary(bag, fallback=fallback_summary)
+    report = ClosingReport(bag_id=bag.id, sold_count=sold_count, summary=summary)
     db.add(report)
     db.commit()
 

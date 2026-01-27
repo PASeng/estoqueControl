@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..db import get_db
-from ..models import Bag, Product
+from ..models import Bag, ClosingReport, Product
 from ..schemas import DashboardSummary
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
@@ -15,7 +15,9 @@ def get_summary(db: Session = Depends(get_db)) -> DashboardSummary:
         select(func.coalesce(func.sum(Product.price * Product.stock_qty), 0))
     ).scalar()
     pending_ai_analysis = db.execute(
-        select(func.count(Bag.id)).where(Bag.status == "Aguardando")
+        select(func.count(ClosingReport.id)).where(
+            ClosingReport.summary.ilike("%IA pendente%")
+        )
     ).scalar()
     upcoming_bags = db.execute(select(Bag.code).where(Bag.due_date.is_not(None)).limit(5))
     return DashboardSummary(
