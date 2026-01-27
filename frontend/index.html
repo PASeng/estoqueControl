@@ -171,7 +171,11 @@
       <div class="modal-card">
         <div class="modal-header">
           <h3 id="modal-title">Detalhes</h3>
-          <button class="modal-close" id="modal-close">✕</button>
+          <button class="modal-close" id="modal-close" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6l-12 12" />
+            </svg>
+          </button>
         </div>
         <div class="modal-body">
           <form class="detail-form modal-form" id="bag-form" data-modal="bag">
@@ -205,6 +209,9 @@
               <div class="items-list" id="bag-items-list"></div>
             </div>
             <div class="form-actions">
+              <button class="secondary" type="button" id="bag-close">
+                Gerar fechamento
+              </button>
               <button class="secondary" type="button" id="bag-reset">
                 Limpar
               </button>

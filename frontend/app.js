@@ -259,6 +259,19 @@ async function loadData() {
 
 function wireFormActions() {
   document.getElementById("modal-close")?.addEventListener("click", closeModal);
+  document.getElementById("bag-close")?.addEventListener("click", async () => {
+    const form = document.getElementById("bag-form");
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    if (!payload.id) {
+      return;
+    }
+    await fetch(`${API_BASE}/closing/${payload.id}/report`, {
+      method: "POST",
+    });
+    await loadData();
+    closeModal();
+  });
   document.getElementById("modal-overlay")?.addEventListener("click", (event) => {
     if (event.target.id === "modal-overlay") {
       closeModal();
