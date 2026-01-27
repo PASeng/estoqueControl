@@ -20,11 +20,12 @@
     </header>
 
     <main class="content">
-      <section class="highlight-card">
-        <div class="highlight-header">
-          <h2>Insights da semana</h2>
-          <button class="primary" id="btn-report">Gerar Relatório PDF</button>
-        </div>
+      <section class="tab-panel active" data-tab="inicio">
+        <section class="highlight-card">
+          <div class="highlight-header">
+            <h2>Insights da semana</h2>
+            <button class="primary" id="btn-report">Gerar Relatório PDF</button>
+          </div>
         <div class="highlight-grid">
           <article class="mini-card">
             <p class="mini-title">Top região</p>
@@ -35,75 +36,106 @@
             <h3 id="focus-suggestion">Anéis</h3>
           </article>
         </div>
+        </section>
+
+        <section class="kpi-grid">
+          <article class="card kpi">
+            <p class="kpi-label">Vendas</p>
+            <h3 id="month-sales">R$ 0,00</h3>
+            <span class="kpi-sub">Mês atual</span>
+          </article>
+          <article class="card kpi">
+            <p class="kpi-label">Circulando</p>
+            <h3 id="bags-active">0</h3>
+            <span class="kpi-sub">Maletas em campo</span>
+          </article>
+        </section>
+
+        <section class="card chart-card">
+          <div class="card-header">
+            <h3>Desempenho semanal</h3>
+            <span class="muted">S1 • S2 • S3 • S4</span>
+          </div>
+          <div class="chart">
+            <span style="height: 90%"></span>
+            <span style="height: 70%"></span>
+            <span style="height: 55%"></span>
+            <span style="height: 40%"></span>
+          </div>
+        </section>
+
+        <section class="card action-card">
+          <div class="action-icon">+</div>
+          <div>
+            <h3>Nova Maleta</h3>
+            <p>Monte o mix ideal para a vendedora.</p>
+          </div>
+          <span class="action-arrow">→</span>
+        </section>
+
+        <section class="card list-card">
+          <div class="card-header">
+            <h3>Próximos fechamentos</h3>
+            <span class="muted">Alertas de vencimento</span>
+          </div>
+          <ul id="upcoming-closings">
+            <li>MA-001 • 03/11</li>
+            <li>MA-014 • 04/11</li>
+            <li>MA-020 • 05/11</li>
+          </ul>
+        </section>
+
+        <section class="card desktop-panel">
+          <h3>Atalhos rápidos</h3>
+          <div class="shortcut-grid">
+            <button class="secondary">Equipe</button>
+            <button class="secondary">Estoque</button>
+            <button class="secondary">Maletas</button>
+            <button class="secondary">Fechamentos</button>
+          </div>
+          <p class="muted">
+            Mais funcionalidades aparecem no desktop para facilitar o controle
+            operacional.
+          </p>
+        </section>
       </section>
 
-      <section class="kpi-grid">
-        <article class="card kpi">
-          <p class="kpi-label">Vendas</p>
-          <h3 id="month-sales">R$ 0,00</h3>
-          <span class="kpi-sub">Mês atual</span>
-        </article>
-        <article class="card kpi">
-          <p class="kpi-label">Circulando</p>
-          <h3 id="bags-active">0</h3>
-          <span class="kpi-sub">Maletas em campo</span>
-        </article>
+      <section class="tab-panel" data-tab="maletas">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Maletas</h3>
+            <span class="muted">Rodízio de consignação</span>
+          </div>
+          <div class="bag-grid" id="bag-list"></div>
+        </section>
       </section>
 
-      <section class="card chart-card">
-        <div class="card-header">
-          <h3>Desempenho semanal</h3>
-          <span class="muted">S1 • S2 • S3 • S4</span>
-        </div>
-        <div class="chart">
-          <span style="height: 90%"></span>
-          <span style="height: 70%"></span>
-          <span style="height: 55%"></span>
-          <span style="height: 40%"></span>
-        </div>
+      <section class="tab-panel" data-tab="equipe">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Equipe</h3>
+            <span class="muted">Vendedoras consignadas</span>
+          </div>
+          <div class="seller-grid" id="seller-list"></div>
+        </section>
       </section>
 
-      <section class="card action-card">
-        <div class="action-icon">+</div>
-        <div>
-          <h3>Nova Maleta</h3>
-          <p>Monte o mix ideal para a vendedora.</p>
-        </div>
-        <span class="action-arrow">→</span>
-      </section>
-
-      <section class="card list-card">
-        <div class="card-header">
-          <h3>Próximos fechamentos</h3>
-          <span class="muted">Alertas de vencimento</span>
-        </div>
-        <ul id="upcoming-closings">
-          <li>MA-001 • 03/11</li>
-          <li>MA-014 • 04/11</li>
-          <li>MA-020 • 05/11</li>
-        </ul>
-      </section>
-
-      <section class="card desktop-panel">
-        <h3>Atalhos rápidos</h3>
-        <div class="shortcut-grid">
-          <button class="secondary">Equipe</button>
-          <button class="secondary">Estoque</button>
-          <button class="secondary">Maletas</button>
-          <button class="secondary">Fechamentos</button>
-        </div>
-        <p class="muted">
-          Mais funcionalidades aparecem no desktop para facilitar o controle
-          operacional.
-        </p>
+      <section class="tab-panel" data-tab="acervo">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Acervo</h3>
+            <span class="muted">Produtos cadastrados</span>
+          </div>
+          <div class="product-grid" id="product-list"></div>
+        </section>
       </section>
     </main>
 
     <nav class="bottom-nav">
-      <button class="nav-item active">Início</button>
-      <button class="nav-item">Maletas</button>
-      <button class="nav-item">Equipe</button>
-      <button class="nav-item">Acervo</button>
+      <button class="nav-item active" data-tab="inicio">Início</button>
+      <button class="nav-item" data-tab="maletas">Maletas</button>
+      <button class="nav-item" data-tab="equipe">Equipe</button>
+      <button class="nav-item" data-tab="acervo">Acervo</button>
     </nav>
 
     <script src="/app.js"></script>

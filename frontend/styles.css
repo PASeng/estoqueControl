@@ -67,6 +67,16 @@ body {
   gap: 18px;
 }
 
+.tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tab-panel.active {
+  display: flex;
+}
+
 .highlight-card {
   background: #f50d54;
   color: #ffffff;
@@ -207,6 +217,74 @@ body {
   display: flex;
   justify-content: space-between;
   font-weight: 600;
+}
+
+.panel-card {
+  gap: 16px;
+}
+
+.bag-grid,
+.seller-grid,
+.product-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.bag-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.seller-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.product-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.mini-tile {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.mini-tile h4 {
+  font-size: 0.95rem;
+}
+
+.mini-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.tag {
+  background: #e2e8f0;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+.tag.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.tag.warning {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.tag.neutral {
+  background: #e0e7ff;
+  color: #4338ca;
 }
 
 .desktop-panel {
