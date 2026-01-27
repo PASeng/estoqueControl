@@ -39,6 +39,7 @@ body {
 .status-pills {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .pill {
@@ -46,6 +47,7 @@ body {
   padding: 6px 12px;
   font-size: 0.75rem;
   font-weight: 600;
+  border: none;
 }
 
 .pill.success {
@@ -502,10 +504,23 @@ button:active {
   font-size: 0.78rem;
   white-space: nowrap;
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .nav-item.active {
   color: #f43f5e;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}
+
+.install-pill {
+  background: #111827;
+  color: #ffffff;
 }
 
 @media (min-width: 1024px) {

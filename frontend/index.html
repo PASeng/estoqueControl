@@ -22,6 +22,7 @@
       <div class="status-pills">
         <span class="pill success">Online</span>
         <span class="pill neutral" id="ai-status-pill">IA pronta</span>
+        <button class="pill install-pill" id="install-btn" hidden>Instalar</button>
       </div>
     </header>
 
@@ -70,7 +71,7 @@
           </div>
         </section>
 
-        <section class="card action-card">
+        <section class="card action-card" data-open-modal="bag">
           <div class="action-icon">+</div>
           <div>
             <h3>Nova Maleta</h3>
@@ -317,11 +318,26 @@
     </div>
 
     <nav class="bottom-nav">
-      <button class="nav-item active" data-tab="inicio">Início</button>
-      <button class="nav-item" data-tab="maletas">Maletas</button>
-      <button class="nav-item" data-tab="equipe">Equipe</button>
-      <button class="nav-item" data-tab="acervo">Acervo</button>
-      <button class="nav-item" data-tab="relatorios">Relatórios</button>
+      <button class="nav-item active" data-tab="inicio">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+      </button>
+      <button class="nav-item" data-tab="maletas">
+        <span class="nav-icon">🧳</span>
+        <span>Maletas</span>
+      </button>
+      <button class="nav-item" data-tab="equipe">
+        <span class="nav-icon">👥</span>
+        <span>Equipe</span>
+      </button>
+      <button class="nav-item" data-tab="acervo">
+        <span class="nav-icon">💎</span>
+        <span>Acervo</span>
+      </button>
+      <button class="nav-item" data-tab="relatorios">
+        <span class="nav-icon">📊</span>
+        <span>Relatórios</span>
+      </button>
     </nav>
 
     <script src="/app.js"></script>

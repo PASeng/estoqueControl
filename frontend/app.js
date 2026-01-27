@@ -10,6 +10,7 @@ let bags = [];
 let products = [];
 let reports = [];
 let filteredProducts = [];
+let deferredPrompt = null;
 
 function setFormValues(form, values) {
   if (!form) return;
@@ -177,7 +178,7 @@ function renderBagItems(items) {
     const product = products.find((entry) => entry.id === item.product_id);
     const line = document.createElement("div");
     line.className = "item-pill";
-    line.textContent = `${product?.name ?? "Produto"} • ${item.quantity_sent} enviados`;
+    line.textContent = `${product?.name ?? "Produto"} • ${item.quantity_sent} enviados • ${item.quantity_returned} retornados`;
     container.appendChild(line);
   });
 }
@@ -268,6 +269,20 @@ function wireFormActions() {
     });
   });
 
+  document.querySelectorAll(".action-card[data-open-modal]").forEach((card) => {
+    card.addEventListener("click", (event) => {
+      event.preventDefault();
+      const modalType = card.dataset.openModal;
+      const title = card.querySelector("h3")?.textContent ?? "Detalhes";
+      const form = document.querySelector(`.modal-form[data-modal="${modalType}"]`);
+      resetForm(form);
+      if (modalType === "bag") {
+        renderBagItems([]);
+      }
+      openModal(modalType, title);
+    });
+  });
+
   document.getElementById("bag-reset")?.addEventListener("click", () => {
     resetForm(document.getElementById("bag-form"));
   });
@@ -283,6 +298,23 @@ function wireFormActions() {
 
   document.getElementById("product-search")?.addEventListener("input", filterProducts);
   document.getElementById("product-search-btn")?.addEventListener("click", filterProducts);
+}
+
+function setupInstallPrompt() {
+  const installBtn = document.getElementById("install-btn");
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    if (installBtn) {
+      installBtn.hidden = false;
+      installBtn.addEventListener("click", async () => {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.hidden = true;
+      });
+    }
+  });
 }
 
 async function submitForm(formId, endpoint) {
@@ -458,3 +490,4 @@ wireFormActions();
 attachFormSubmits();
 loadData();
 loadSummary();
+setupInstallPrompt();
