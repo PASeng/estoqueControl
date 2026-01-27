@@ -210,6 +210,7 @@ function filterProducts() {
     return (
       product.name.toLowerCase().includes(query) ||
       product.category.toLowerCase().includes(query) ||
+      (product.material ?? "").toLowerCase().includes(query) ||
       (product.barcode ?? "").toLowerCase().includes(query)
     );
   });
@@ -292,6 +293,7 @@ async function submitForm(formId, endpoint) {
   const id = payload.id;
   delete payload.id;
   delete payload.created_at;
+  delete payload.photo_url;
 
   if (payload.price) {
     payload.price = Number(payload.price);
