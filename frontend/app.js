@@ -4,16 +4,96 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 });
 
 const sellers = [
-  { name: "Camila Duarte", region: "Zona Norte", bags: 2, status: "Ativa" },
-  { name: "Bianca Lopes", region: "Zona Sul", bags: 1, status: "Ativa" },
-  { name: "Juliana Reis", region: "Centro", bags: 1, status: "Em rota" },
-  { name: "Renata Alves", region: "Zona Oeste", bags: 0, status: "Disponível" },
-  { name: "Fernanda Dias", region: "Zona Leste", bags: 2, status: "Ativa" },
-  { name: "Larissa Monteiro", region: "Zona Norte", bags: 1, status: "Ativa" },
-  { name: "Patricia Souza", region: "Centro", bags: 0, status: "Disponível" },
-  { name: "Marta Santos", region: "Zona Sul", bags: 1, status: "Em rota" },
-  { name: "Natalia Cruz", region: "Zona Oeste", bags: 1, status: "Ativa" },
-  { name: "Ana Paula Lima", region: "Zona Leste", bags: 0, status: "Disponível" },
+  {
+    name: "Camila Duarte",
+    region: "Zona Norte",
+    bags: 2,
+    status: "Ativa",
+    contact: "(11) 98765-1201",
+    address: "Rua das Oliveiras, 120",
+    gps: "-23.482, -46.621",
+  },
+  {
+    name: "Bianca Lopes",
+    region: "Zona Sul",
+    bags: 1,
+    status: "Ativa",
+    contact: "(11) 98814-3344",
+    address: "Av. República, 450",
+    gps: "-23.563, -46.654",
+  },
+  {
+    name: "Juliana Reis",
+    region: "Centro",
+    bags: 1,
+    status: "Em rota",
+    contact: "(11) 97987-5520",
+    address: "Rua do Comércio, 88",
+    gps: "-23.548, -46.636",
+  },
+  {
+    name: "Renata Alves",
+    region: "Zona Oeste",
+    bags: 0,
+    status: "Disponível",
+    contact: "(11) 98541-0092",
+    address: "Rua Guaicurus, 901",
+    gps: "-23.526, -46.697",
+  },
+  {
+    name: "Fernanda Dias",
+    region: "Zona Leste",
+    bags: 2,
+    status: "Ativa",
+    contact: "(11) 99411-7782",
+    address: "Av. Radial Leste, 3020",
+    gps: "-23.544, -46.564",
+  },
+  {
+    name: "Larissa Monteiro",
+    region: "Zona Norte",
+    bags: 1,
+    status: "Ativa",
+    contact: "(11) 99612-7701",
+    address: "Rua Campo Belo, 14",
+    gps: "-23.475, -46.633",
+  },
+  {
+    name: "Patricia Souza",
+    region: "Centro",
+    bags: 0,
+    status: "Disponível",
+    contact: "(11) 99098-1100",
+    address: "Rua 7 de Abril, 19",
+    gps: "-23.545, -46.638",
+  },
+  {
+    name: "Marta Santos",
+    region: "Zona Sul",
+    bags: 1,
+    status: "Em rota",
+    contact: "(11) 98572-4420",
+    address: "Rua Bandeira, 712",
+    gps: "-23.589, -46.669",
+  },
+  {
+    name: "Natalia Cruz",
+    region: "Zona Oeste",
+    bags: 1,
+    status: "Ativa",
+    contact: "(11) 97771-0920",
+    address: "Rua Lapa, 331",
+    gps: "-23.514, -46.693",
+  },
+  {
+    name: "Ana Paula Lima",
+    region: "Zona Leste",
+    bags: 0,
+    status: "Disponível",
+    contact: "(11) 98220-9901",
+    address: "Rua Aricanduva, 1700",
+    gps: "-23.566, -46.521",
+  },
 ];
 
 const bags = [
@@ -64,6 +144,45 @@ const products = Array.from({ length: 50 }, (_, index) => {
   };
 });
 
+const reports = [
+  {
+    bag: "MA-001",
+    date: "02/11/2025",
+    sold: 6,
+    summary:
+      "Vendas concentradas em anéis banhados. Sugestão: reduzir prata na próxima maleta.",
+  },
+  {
+    bag: "MA-014",
+    date: "01/11/2025",
+    sold: 8,
+    summary:
+      "Boa saída de colares de ouro. Recomenda-se incluir mais conjuntos completos.",
+  },
+  {
+    bag: "MA-020",
+    date: "30/10/2025",
+    sold: 4,
+    summary:
+      "Baixa conversão em pulseiras. Ajustar mix para peças de maior giro.",
+  },
+];
+
+function setFormValues(form, values) {
+  if (!form) return;
+  Object.entries(values).forEach(([key, value]) => {
+    const field = form.querySelector(`[name="${key}"]`);
+    if (field) {
+      field.value = value ?? "";
+    }
+  });
+}
+
+function resetForm(form) {
+  if (!form) return;
+  form.reset();
+}
+
 function renderSellers() {
   const container = document.getElementById("seller-list");
   if (!container) return;
@@ -79,6 +198,16 @@ function renderSellers() {
       </div>
       <span class="tag neutral">${seller.status}</span>
     `;
+    card.addEventListener("click", () => {
+      setFormValues(document.getElementById("seller-form"), {
+        name: seller.name,
+        region: seller.region,
+        contact: seller.contact,
+        address: seller.address,
+        gps: seller.gps,
+        bags: seller.bags,
+      });
+    });
     container.appendChild(card);
   });
 }
@@ -107,6 +236,15 @@ function renderBags() {
       </div>
       <span class="tag ${tagClass}">${bag.status}</span>
     `;
+    card.addEventListener("click", () => {
+      setFormValues(document.getElementById("bag-form"), {
+        code: bag.code,
+        status: bag.status,
+        seller: bag.seller,
+        due: bag.due,
+        items: bag.items,
+      });
+    });
     container.appendChild(card);
   });
 }
@@ -129,7 +267,54 @@ function renderProducts() {
         <span>${currencyFormatter.format(product.price)}</span>
       </div>
     `;
+    card.addEventListener("click", () => {
+      setFormValues(document.getElementById("product-form"), product);
+    });
     container.appendChild(card);
+  });
+}
+
+function renderReports() {
+  const container = document.getElementById("report-list");
+  if (!container) return;
+  container.innerHTML = "";
+  reports.forEach((report) => {
+    const card = document.createElement("div");
+    card.className = "mini-tile";
+    card.innerHTML = `
+      <h4>Maleta ${report.bag}</h4>
+      <div class="mini-meta">
+        <span>${report.date}</span>
+        <span>${report.sold} vendidos</span>
+      </div>
+      <p class="muted">${report.summary}</p>
+    `;
+    card.addEventListener("click", () => {
+      setFormValues(document.getElementById("report-form"), report);
+    });
+    container.appendChild(card);
+  });
+}
+
+function wireFormActions() {
+  document.getElementById("bag-reset")?.addEventListener("click", () => {
+    resetForm(document.getElementById("bag-form"));
+  });
+  document.getElementById("seller-reset")?.addEventListener("click", () => {
+    resetForm(document.getElementById("seller-form"));
+  });
+  document.getElementById("product-reset")?.addEventListener("click", () => {
+    resetForm(document.getElementById("product-form"));
+  });
+  document.getElementById("report-reset")?.addEventListener("click", () => {
+    resetForm(document.getElementById("report-form"));
+  });
+
+  ["bag-form", "seller-form", "product-form", "report-form"].forEach((id) => {
+    const form = document.getElementById(id);
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
   });
 }
 
@@ -200,5 +385,7 @@ if ("serviceWorker" in navigator) {
 renderSellers();
 renderBags();
 renderProducts();
+renderReports();
 setupNavigation();
+wireFormActions();
 loadSummary();

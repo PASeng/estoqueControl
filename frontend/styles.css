@@ -225,7 +225,8 @@ body {
 
 .bag-grid,
 .seller-grid,
-.product-grid {
+.product-grid,
+.report-grid {
   display: grid;
   gap: 12px;
 }
@@ -240,6 +241,10 @@ body {
 
 .product-grid {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.report-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .mini-tile {
@@ -285,6 +290,46 @@ body {
 .tag.neutral {
   background: #e0e7ff;
   color: #4338ca;
+}
+
+.detail-card {
+  background: #ffffff;
+}
+
+.detail-form {
+  display: grid;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.form-row textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .desktop-panel {
@@ -363,6 +408,16 @@ button:active {
     display: grid;
     grid-template-columns: repeat(2, minmax(140px, 1fr));
     gap: 12px;
+  }
+
+  .tab-panel[data-tab="inicio"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tab-panel[data-tab="inicio"] .highlight-card,
+  .tab-panel[data-tab="inicio"] .chart-card {
+    grid-column: span 2;
   }
 }
 
