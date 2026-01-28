@@ -85,9 +85,13 @@ def scan_bag_item(
     ).scalar_one_or_none()
     if not bag:
         raise HTTPException(status_code=404, detail="Maleta não encontrada")
-    product = db.execute(
-        select(Product).where(Product.barcode == payload.barcode)
-    ).scalar_one_or_none()
+    if not payload.barcode:
+        raise HTTPException(status_code=400, detail="Código de barras inválido")
+    product = (
+        db.execute(select(Product).where(Product.barcode == payload.barcode))
+        .scalars()
+        .first()
+    )
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     bag_item = next(
