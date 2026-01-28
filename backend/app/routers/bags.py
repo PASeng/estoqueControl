@@ -96,9 +96,11 @@ def scan_bag_item(
     )
     if not bag_item:
         raise HTTPException(status_code=400, detail="Produto não está na maleta")
-    if bag_item.quantity_returned >= bag_item.quantity_sent:
+    quantity_sent = bag_item.quantity_sent or 0
+    quantity_returned = bag_item.quantity_returned or 0
+    if quantity_returned >= quantity_sent:
         raise HTTPException(status_code=400, detail="Todas as peças já foram bipadas")
-    bag_item.quantity_returned += 1
+    bag_item.quantity_returned = quantity_returned + 1
     db.commit()
     db.refresh(bag)
     return bag
