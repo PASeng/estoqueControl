@@ -78,11 +78,15 @@ def update_bag(bag_id: int, payload: BagCreate, db: Session = Depends(get_db)) -
 def scan_bag_item(
     bag_id: int, payload: BagScanRequest, db: Session = Depends(get_db)
 ) -> BagResponse:
-    bag = db.execute(
-        select(Bag)
-        .options(joinedload(Bag.items).joinedload(BagItem.product))
-        .where(Bag.id == bag_id)
-    ).scalar_one_or_none()
+    bag = (
+        db.execute(
+            select(Bag)
+            .options(joinedload(Bag.items).joinedload(BagItem.product))
+            .where(Bag.id == bag_id)
+        )
+        .unique()
+        .scalar_one_or_none()
+    )
     if not bag:
         raise HTTPException(status_code=404, detail="Maleta não encontrada")
     if not payload.barcode:
