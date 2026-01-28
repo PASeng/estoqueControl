@@ -28,9 +28,9 @@ def create_closing_report(bag_id: int, db: Session = Depends(get_db)) -> dict:
     if not bag:
         raise HTTPException(status_code=404, detail="Maleta não encontrada")
 
-    sold_count = sum(
-        max(item.quantity_sent - item.quantity_returned, 0) for item in bag.items
-    )
+    total_sent = sum(item.quantity_sent for item in bag.items)
+    total_returned = sum(item.quantity_returned for item in bag.items)
+    sold_count = max(total_sent - total_returned, 0)
     fallback_summary = (
         f"Fechamento da maleta {bag.code} em {datetime.utcnow().date()}: "
         "IA pendente para gerar insights."
