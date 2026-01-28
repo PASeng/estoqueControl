@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from ..db import get_db
-from ..models import Bag, BagItem
-from ..schemas import BagCreate, BagResponse
+from ..models import Bag, BagItem, Product
+from ..schemas import BagCreate, BagResponse, BagScanRequest
 
 router = APIRouter(prefix="/bags", tags=["Maletas"])
 
@@ -69,6 +69,36 @@ def update_bag(bag_id: int, payload: BagCreate, db: Session = Depends(get_db)) -
                     quantity_returned=0,
                 )
             )
+    db.commit()
+    db.refresh(bag)
+    return bag
+
+
+@router.post("/{bag_id}/scan", response_model=BagResponse)
+def scan_bag_item(
+    bag_id: int, payload: BagScanRequest, db: Session = Depends(get_db)
+) -> BagResponse:
+    bag = db.execute(
+        select(Bag)
+        .options(joinedload(Bag.items).joinedload(BagItem.product))
+        .where(Bag.id == bag_id)
+    ).scalar_one_or_none()
+    if not bag:
+        raise HTTPException(status_code=404, detail="Maleta não encontrada")
+    product = db.execute(
+        select(Product).where(Product.barcode == payload.barcode)
+    ).scalar_one_or_none()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    bag_item = next(
+        (item for item in bag.items if item.product_id == product.id),
+        None,
+    )
+    if not bag_item:
+        raise HTTPException(status_code=400, detail="Produto não está na maleta")
+    if bag_item.quantity_returned >= bag_item.quantity_sent:
+        raise HTTPException(status_code=400, detail="Todas as peças já foram bipadas")
+    bag_item.quantity_returned += 1
     db.commit()
     db.refresh(bag)
     return bag

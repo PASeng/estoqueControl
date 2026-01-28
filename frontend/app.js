@@ -49,6 +49,42 @@ function syncSellerIdFromName() {
   hidden.value = match ? String(match.id) : "";
 }
 
+async function handleBagScan() {
+  const input = document.getElementById("bag-scan");
+  const idField = document.querySelector("#bag-form [name=\"id\"]");
+  const bagId = idField?.value;
+  const barcode = input?.value?.trim();
+  if (!bagId) {
+    alert("Salve a maleta antes de bipar a devolução.");
+    return;
+  }
+  if (!barcode) {
+    alert("Informe o código de barras.");
+    return;
+  }
+  const response = await fetch(`${API_BASE}/bags/${bagId}/scan`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ barcode }),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    alert(data.detail ?? "Erro ao registrar devolução.");
+    return;
+  }
+  const updatedBag = await response.json();
+  const index = bags.findIndex((bag) => String(bag.id) === String(updatedBag.id));
+  if (index >= 0) {
+    bags[index] = updatedBag;
+  }
+  renderBags();
+  renderBagItems(updatedBag.items ?? []);
+  if (input) {
+    input.value = "";
+    input.focus();
+  }
+}
+
 function renderSellers() {
   const container = document.getElementById("seller-list");
   if (!container) return;
@@ -224,6 +260,12 @@ function openModal(type, title) {
   });
   titleEl.textContent = title;
   overlay.classList.add("active");
+  if (type === "bag") {
+    const scanInput = document.getElementById("bag-scan");
+    if (scanInput) {
+      scanInput.value = "";
+    }
+  }
 }
 
 function closeModal() {
@@ -285,6 +327,15 @@ function wireFormActions() {
   document.getElementById("modal-close")?.addEventListener("click", closeModal);
   document.getElementById("bag-seller")?.addEventListener("input", () => {
     syncSellerIdFromName();
+  });
+  document.getElementById("bag-scan-btn")?.addEventListener("click", () => {
+    handleBagScan();
+  });
+  document.getElementById("bag-scan")?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleBagScan();
+    }
   });
   document.getElementById("bag-close")?.addEventListener("click", async () => {
     const form = document.getElementById("bag-form");

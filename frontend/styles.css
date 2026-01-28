@@ -241,6 +241,17 @@ body {
   align-items: center;
 }
 
+.scan-bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 10px;
+  align-items: center;
+}
+
 .search-label {
   font-size: 0.75rem;
   color: #64748b;
@@ -259,7 +270,25 @@ body {
   font-size: 0.9rem;
 }
 
+.scan-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #fee2e2;
+  color: #f43f5e;
+  font-size: 0.9rem;
+}
+
 .search-bar input {
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.scan-bar input {
   border: none;
   background: transparent;
   font-size: 0.9rem;
@@ -268,6 +297,13 @@ body {
 
 .search-button {
   background: #f43f5e;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+
+.scan-button {
+  background: #111827;
   color: #ffffff;
   border-radius: 12px;
   padding: 8px 14px;

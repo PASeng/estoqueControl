@@ -56,6 +56,10 @@ class BagItemResponse(BaseModel):
     quantity_returned: int
 
 
+class BagScanRequest(BaseModel):
+    barcode: str
+
+
 class ClosingReportResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

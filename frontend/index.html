@@ -213,6 +213,21 @@
               <input id="bag-items" name="items" type="number" min="0" />
             </div>
             <div class="form-row">
+              <label for="bag-scan">Bipar devolução</label>
+              <div class="scan-bar">
+                <span class="scan-icon">📦</span>
+                <input
+                  id="bag-scan"
+                  type="search"
+                  placeholder="Bipe o código de barras"
+                />
+                <button class="scan-button" type="button" id="bag-scan-btn">
+                  Registrar
+                </button>
+              </div>
+              <span class="muted">Peças não bipadas serão consideradas vendas.</span>
+            </div>
+            <div class="form-row">
               <label>Itens da maleta</label>
               <div class="items-list" id="bag-items-list"></div>
             </div>
