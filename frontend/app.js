@@ -68,8 +68,17 @@ async function handleBagScan() {
     body: JSON.stringify({ barcode }),
   });
   if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    alert(data.detail ?? "Erro ao registrar devolução.");
+    const text = await response.text();
+    let message = "Erro ao registrar devolução.";
+    if (text) {
+      try {
+        const data = JSON.parse(text);
+        message = data.detail ?? message;
+      } catch {
+        message = text;
+      }
+    }
+    alert(`${message} (código ${response.status})`);
     return;
   }
   const updatedBag = await response.json();
@@ -235,14 +244,19 @@ function renderBagItems(items) {
   }
   const header = document.createElement("div");
   header.className = "item-pill header item-row";
-  header.innerHTML = "<span>Item</span><span>Env.</span><span>Ret.</span><span>Preço</span>";
+  header.innerHTML =
+    "<span>Item</span><span>Env.</span><span>Ret.</span><span>Preço</span>";
   container.appendChild(header);
   items.forEach((item) => {
     const product = products.find((entry) => entry.id === item.product_id);
+    const barcode = product?.barcode ? `#${product.barcode}` : "Sem código";
     const line = document.createElement("div");
     line.className = "item-pill item-row";
     line.innerHTML = `
-      <span>${product?.name ?? "Produto"}</span>
+      <span class="item-name">
+        <span>${product?.name ?? "Produto"}</span>
+        <small>${barcode}</small>
+      </span>
       <span>${item.quantity_sent}</span>
       <span>${item.quantity_returned}</span>
       <span>${currencyFormatter.format(product?.price ?? 0)}</span>

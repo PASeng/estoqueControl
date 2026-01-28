@@ -443,6 +443,17 @@ body {
   gap: 8px;
 }
 
+.item-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-name small {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
