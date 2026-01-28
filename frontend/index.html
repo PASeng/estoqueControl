@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f50d54" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Kamilla Intelligence</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div>
+        <p class="eyebrow">Painel de Estratégia</p>
+        <h1>Olá, Kamilla</h1>
+      </div>
+      <div class="status-pills">
+        <span class="pill success">Online</span>
+        <span class="pill neutral" id="ai-status-pill">IA pronta</span>
+        <button class="pill install-pill" id="install-btn" hidden>Instalar</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="tab-panel active" data-tab="inicio">
+        <section class="highlight-card">
+          <div class="highlight-header">
+            <h2>Insights da semana</h2>
+            <button class="primary" id="btn-report">Gerar Relatório PDF</button>
+          </div>
+        <div class="highlight-grid">
+          <article class="mini-card">
+            <p class="mini-title">Top região</p>
+            <h3 id="region-leader">Zona Norte</h3>
+          </article>
+          <article class="mini-card">
+            <p class="mini-title">Foco sugerido</p>
+            <h3 id="focus-suggestion">Anéis</h3>
+          </article>
+        </div>
+        </section>
+
+        <section class="kpi-grid">
+          <article class="card kpi">
+            <p class="kpi-label">Vendas</p>
+            <h3 id="month-sales">R$ 0,00</h3>
+            <span class="kpi-sub">Mês atual</span>
+          </article>
+          <article class="card kpi">
+            <p class="kpi-label">Circulando</p>
+            <h3 id="bags-active">0</h3>
+            <span class="kpi-sub">Maletas em campo</span>
+          </article>
+        </section>
+
+        <section class="card chart-card">
+          <div class="card-header">
+            <h3>Desempenho semanal</h3>
+            <span class="muted">S1 • S2 • S3 • S4</span>
+          </div>
+          <div class="chart">
+            <span style="height: 90%"></span>
+            <span style="height: 70%"></span>
+            <span style="height: 55%"></span>
+            <span style="height: 40%"></span>
+          </div>
+        </section>
+
+        <section class="card action-card" data-open-modal="bag">
+          <div class="action-icon">+</div>
+          <div>
+            <h3>Nova Maleta</h3>
+            <p>Monte o mix ideal para a vendedora.</p>
+          </div>
+          <span class="action-arrow">→</span>
+        </section>
+
+        <section class="card list-card">
+          <div class="card-header">
+            <h3>Próximos fechamentos</h3>
+            <span class="muted">Alertas de vencimento</span>
+          </div>
+          <ul id="upcoming-closings">
+            <li>MA-001 • 03/11</li>
+            <li>MA-014 • 04/11</li>
+            <li>MA-020 • 05/11</li>
+          </ul>
+        </section>
+
+        <section class="card desktop-panel">
+          <h3>Atalhos rápidos</h3>
+          <div class="shortcut-grid">
+            <button class="secondary">Equipe</button>
+            <button class="secondary">Estoque</button>
+            <button class="secondary">Maletas</button>
+            <button class="secondary">Fechamentos</button>
+          </div>
+          <p class="muted">
+            Mais funcionalidades aparecem no desktop para facilitar o controle
+            operacional.
+          </p>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="maletas">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Maletas</h3>
+            <span class="muted">Rodízio de consignação</span>
+          </div>
+          <button class="secondary add-button" data-open-modal="bag">
+            + Nova maleta
+          </button>
+          <div class="bag-grid" id="bag-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="equipe">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Equipe</h3>
+            <span class="muted">Vendedoras consignadas</span>
+          </div>
+          <button class="secondary add-button" data-open-modal="seller">
+            + Nova vendedora
+          </button>
+          <div class="seller-grid" id="seller-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="acervo">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Acervo</h3>
+            <span class="muted">Produtos cadastrados</span>
+          </div>
+          <div class="search-label">Bipar código</div>
+          <div class="search-bar">
+            <span class="search-icon">⨁</span>
+            <input
+              id="product-search"
+              type="search"
+              placeholder="Bipe o código de barras, nome, material ou categoria"
+            />
+            <button class="search-button" id="product-search-btn">🔍</button>
+          </div>
+          <button class="secondary add-button" data-open-modal="product">
+            + Novo produto
+          </button>
+          <div class="product-grid" id="product-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab="relatorios">
+        <section class="card panel-card">
+          <div class="card-header">
+            <h3>Relatórios de vendas</h3>
+            <span class="muted">Fechamentos recentes</span>
+          </div>
+          <div class="report-grid" id="report-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modal-title">Detalhes</h3>
+          <button class="modal-close" id="modal-close" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6l-12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="detail-form modal-form" id="bag-form" data-modal="bag">
+            <input type="hidden" name="id" />
+            <div class="form-row">
+              <label for="bag-code">Código</label>
+              <input id="bag-code" name="code" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="bag-status">Status</label>
+              <select id="bag-status" name="status">
+                <option value="Disponível">Disponível</option>
+                <option value="Em campo">Em campo</option>
+                <option value="Aguardando">Aguardando</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="bag-seller">Vendedora</label>
+              <input
+                id="bag-seller"
+                name="seller_name"
+                type="text"
+                list="seller-options"
+                placeholder="Digite para buscar"
+              />
+              <input id="bag-seller-id" name="seller_id" type="hidden" />
+              <datalist id="seller-options"></datalist>
+            </div>
+            <div class="form-row">
+              <label for="bag-due">Vencimento</label>
+              <input id="bag-due" name="due" type="text" placeholder="dd/mm" />
+            </div>
+            <div class="form-row">
+              <label for="bag-items">Itens enviados</label>
+              <input id="bag-items" name="items" type="number" min="0" />
+            </div>
+            <div class="form-row">
+              <label for="bag-scan">Bipar devolução</label>
+              <div class="scan-bar">
+                <span class="scan-icon">📦</span>
+                <input
+                  id="bag-scan"
+                  type="search"
+                  placeholder="Bipe o código de barras"
+                />
+                <button class="scan-button" type="button" id="bag-scan-btn">
+                  Registrar
+                </button>
+              </div>
+              <span class="muted">Peças não bipadas serão consideradas vendas.</span>
+            </div>
+            <div class="form-row">
+              <label>Itens da maleta</label>
+              <div class="items-list" id="bag-items-list"></div>
+            </div>
+            <div class="form-actions">
+              <button class="secondary" type="button" id="bag-close">
+                Gerar fechamento
+              </button>
+              <button class="secondary" type="button" id="bag-reset">
+                Limpar
+              </button>
+              <button class="primary" type="submit">Salvar</button>
+            </div>
+          </form>
+
+          <form class="detail-form modal-form" id="seller-form" data-modal="seller">
+            <input type="hidden" name="id" />
+            <div class="form-row">
+              <label for="seller-name">Nome</label>
+              <input id="seller-name" name="name" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-cpf">CPF</label>
+              <input id="seller-cpf" name="cpf" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-region">Região</label>
+              <input id="seller-region" name="region" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-contact">Contato</label>
+              <input id="seller-contact" name="phone" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-address">Endereço</label>
+              <input id="seller-address" name="address" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="seller-gps">Ponto GPS</label>
+              <input id="seller-gps" name="gps_point" type="text" />
+            </div>
+            <div class="form-actions">
+              <button class="secondary" type="button" id="seller-reset">
+                Limpar
+              </button>
+              <button class="primary" type="submit">Salvar</button>
+            </div>
+          </form>
+
+          <form
+            class="detail-form modal-form"
+            id="product-form"
+            data-modal="product"
+          >
+            <input type="hidden" name="id" />
+            <div class="form-row">
+              <label for="product-barcode">Código de barras</label>
+              <input id="product-barcode" name="barcode" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="product-name">Nome</label>
+              <input id="product-name" name="name" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="product-category">Categoria</label>
+              <input id="product-category" name="category" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="product-material">Material</label>
+              <input id="product-material" name="material" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="product-photo">URL da foto</label>
+              <input id="product-photo" name="photo_url" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="product-price">Preço</label>
+              <input id="product-price" name="price" type="number" step="0.01" />
+            </div>
+            <div class="form-row">
+              <label for="product-stock">Estoque</label>
+              <input id="product-stock" name="stock_qty" type="number" />
+            </div>
+            <div class="form-actions">
+              <button class="secondary" type="button" id="product-reset">
+                Limpar
+              </button>
+              <button class="primary" type="submit">Salvar</button>
+            </div>
+          </form>
+
+          <form class="detail-form modal-form" id="report-form" data-modal="report">
+            <input type="hidden" name="id" />
+            <div class="form-row">
+              <label for="report-bag">Maleta</label>
+              <input id="report-bag" name="bag_id" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="report-date">Data</label>
+              <input id="report-date" name="created_at" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="report-sold">Itens vendidos</label>
+              <input id="report-sold" name="sold_count" type="number" />
+            </div>
+            <div class="form-row">
+              <label for="report-summary">Resumo</label>
+              <textarea id="report-summary" name="summary" rows="4"></textarea>
+            </div>
+            <div class="form-actions">
+              <button class="secondary" type="button" id="report-reset">
+                Limpar
+              </button>
+              <button class="primary" type="submit">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="inicio">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />
+          </svg>
+        </span>
+        <span>Início</span>
+      </button>
+      <button class="nav-item" data-tab="maletas">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" />
+            <rect x="4" y="7" width="16" height="13" rx="2" />
+            <path d="M4 12h16" />
+          </svg>
+        </span>
+        <span>Maletas</span>
+      </button>
+      <button class="nav-item" data-tab="equipe">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="8" cy="8" r="3" />
+            <circle cx="16" cy="9" r="2.5" />
+            <path d="M3 20a5 5 0 0 1 10 0" />
+            <path d="M13.5 20a4 4 0 0 1 7 0" />
+          </svg>
+        </span>
+        <span>Equipe</span>
+      </button>
+      <button class="nav-item" data-tab="acervo">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3l6 6-6 12L6 9z" />
+          </svg>
+        </span>
+        <span>Acervo</span>
+      </button>
+      <button class="nav-item" data-tab="relatorios">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4h16v16H4z" />
+            <path d="M8 16V10M12 16V7M16 16v-4" />
+          </svg>
+        </span>
+        <span>Relatórios</span>
+      </button>
+    </nav>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
