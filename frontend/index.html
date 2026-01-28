@@ -194,7 +194,15 @@
             </div>
             <div class="form-row">
               <label for="bag-seller">Vendedora</label>
-              <input id="bag-seller" name="seller" type="text" />
+              <input
+                id="bag-seller"
+                name="seller_name"
+                type="text"
+                list="seller-options"
+                placeholder="Digite para buscar"
+              />
+              <input id="bag-seller-id" name="seller_id" type="hidden" />
+              <datalist id="seller-options"></datalist>
             </div>
             <div class="form-row">
               <label for="bag-due">Vencimento</label>

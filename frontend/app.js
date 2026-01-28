@@ -27,6 +27,28 @@ function resetForm(form) {
   form.reset();
 }
 
+function buildSellerOptions() {
+  const datalist = document.getElementById("seller-options");
+  if (!datalist) return;
+  datalist.innerHTML = "";
+  sellers.forEach((seller) => {
+    const option = document.createElement("option");
+    option.value = seller.name;
+    option.dataset.id = String(seller.id);
+    datalist.appendChild(option);
+  });
+}
+
+function syncSellerIdFromName() {
+  const input = document.getElementById("bag-seller");
+  const hidden = document.getElementById("bag-seller-id");
+  if (!input || !hidden) return;
+  const match = sellers.find(
+    (seller) => seller.name.toLowerCase() === input.value.toLowerCase(),
+  );
+  hidden.value = match ? String(match.id) : "";
+}
+
 function renderSellers() {
   const container = document.getElementById("seller-list");
   if (!container) return;
@@ -92,7 +114,8 @@ function renderBags() {
         id: bag.id,
         code: bag.code,
         status: bag.status,
-        seller: seller?.name ?? "",
+        seller_name: seller?.name ?? "",
+        seller_id: seller?.id ?? "",
         due: formatDate(bag.due_date),
         items: totalItems ?? 0,
       });
@@ -248,6 +271,7 @@ async function loadData() {
     filteredProducts = [...products];
     bags = bagsData;
     reports = reportsData;
+    buildSellerOptions();
     renderSellers();
     renderProducts();
     renderBags();
@@ -259,6 +283,9 @@ async function loadData() {
 
 function wireFormActions() {
   document.getElementById("modal-close")?.addEventListener("click", closeModal);
+  document.getElementById("bag-seller")?.addEventListener("input", () => {
+    syncSellerIdFromName();
+  });
   document.getElementById("bag-close")?.addEventListener("click", async () => {
     const form = document.getElementById("bag-form");
     const formData = new FormData(form);
@@ -384,14 +411,6 @@ function parseDueDate(value) {
   return new Date(year, Number(month) - 1, Number(day)).toISOString();
 }
 
-function findSellerIdByName(name) {
-  if (!name) return null;
-  const seller = sellers.find(
-    (entry) => entry.name.toLowerCase() === name.toLowerCase(),
-  );
-  return seller?.id ?? null;
-}
-
 function attachFormSubmits() {
   document.getElementById("seller-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -425,12 +444,16 @@ function attachFormSubmits() {
     const form = document.getElementById("bag-form");
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
+    if (payload.status === "Em campo" && !payload.seller_id) {
+      alert("Selecione uma vendedora para colocar a maleta em circulação.");
+      return;
+    }
     const id = payload.id;
     const request = {
       code: payload.code,
       status: payload.status,
       due_date: parseDueDate(payload.due),
-      seller_id: findSellerIdByName(payload.seller),
+      seller_id: payload.seller_id ? Number(payload.seller_id) : null,
       items: [],
     };
     await fetch(`${API_BASE}/bags${id ? `/${id}` : ""}`, {

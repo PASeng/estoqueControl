@@ -20,6 +20,11 @@ def create_bag(payload: BagCreate, db: Session = Depends(get_db)) -> BagResponse
     existing = db.execute(select(Bag).where(Bag.code == payload.code)).scalar_one_or_none()
     if existing:
         raise HTTPException(status_code=400, detail="Código de maleta já cadastrado")
+    if payload.status == "Em campo" and payload.seller_id is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Maleta em campo precisa de uma vendedora atribuída",
+        )
     bag = Bag(
         code=payload.code,
         status=payload.status,
@@ -45,6 +50,11 @@ def update_bag(bag_id: int, payload: BagCreate, db: Session = Depends(get_db)) -
     bag = db.execute(select(Bag).where(Bag.id == bag_id)).scalar_one_or_none()
     if not bag:
         raise HTTPException(status_code=404, detail="Maleta não encontrada")
+    if payload.status == "Em campo" and payload.seller_id is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Maleta em campo precisa de uma vendedora atribuída",
+        )
     bag.code = payload.code
     bag.status = payload.status
     bag.due_date = payload.due_date
